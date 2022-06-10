@@ -1,13 +1,19 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
+//import axios from "axios";
 
 import FirebaseContext from "../../../utils/FirebaseContext";
 import FirebaseServiceStudent from "../../../services/FirebaseServiceStudent";
 
 const CreateStudentPage = () => 
   <FirebaseContext.Consumer>
-    {(firebase) => <CreateStudent firebase={firebase} />}
+    {
+      (firebase) => {
+        if(localStorage.getItem('user')!='null')
+          return <CreateStudent firebase={firebase} />
+        return
+      }
+    }
   </FirebaseContext.Consumer>
 
 const CreateStudent = (props) => {

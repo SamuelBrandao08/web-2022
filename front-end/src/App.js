@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useNavigate} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 //import "./styles.css";
 
@@ -14,7 +14,51 @@ import CreateProfessor from "./components/crud/professor/CreateProfessor";
 import ListProfessor from "./components/crud/professor/ListProfessor";
 import EditProfessor from "./components/crud/professor/EditProfessor";
 
-export default function App() {
+import FirebaseContext from "./utils/FirebaseContext";
+import FirebaseUserService from "./services/FirebaseUserService";
+
+const AppPage = () =>
+<FirebaseContext.Consumer>
+  {firebase => <App firebase={firebase}/>}  
+</FirebaseContext.Consumer>
+
+function App(props) {
+
+  const [userLogged,setUserLogged] = React.useState(false)
+  const navigate = useNavigate()
+
+  const renderUserAndLogoutButton = () => {
+     //console.log("Usuario: ", localStorage.getItem('user'))
+    if(localStorage != null && localStorage.getItem('user') !== 'null'){
+      //console.log('teste')
+      return (
+        <div style={{ paddingRight: 20 }}>
+          Olá, {JSON.parse(localStorage.getItem('user')).email}
+          <button onClick={() => { logout() }} style={{ marginLeft: 20 }}>Logout</button>
+        </div>
+      )
+    }
+    return
+  }
+
+  React.useEffect(()=>{
+      if(localStorage.getItem('user') !== 'null') 
+        setUserLogged(true)
+  },[localStorage.getItem])
+
+  const logout = () => {
+    FirebaseUserService.logout(
+      props.firebase.getAuthentication(),
+      (value)=>{
+        if(value){
+          props.firebase.setAuthenticatedUser(null)
+          localStorage.setItem('user','null')
+          setUserLogged(false)
+          navigate('/')
+        }
+      })
+  }
+
   return (
     <div className="container">
       <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
@@ -90,6 +134,7 @@ export default function App() {
             </li>
           </ul>
         </div>
+        {renderUserAndLogoutButton()}
       </nav>
 
       <Routes>
@@ -107,3 +152,5 @@ export default function App() {
     </div>
   );
 }
+
+export default AppPage

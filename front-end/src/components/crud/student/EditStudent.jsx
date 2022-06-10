@@ -11,29 +11,25 @@ const EditStudentPage = () =>
   </FirebaseContext.Consumer>
 
 function EditStudent(props) {
-  // const { state } = useLocation();
-  // const student = state?.props;
-  // const [name, setName] = useState(student?.name ?? "");
-  // const [course, setCourse] = useState(student?.course ?? "");
-  // const [ira, setIra] = useState(student?.ira ?? 0);
-  const [name, setName] = useState("")
-  const [course, setCourse] = useState("")
-  const [ira, setIra] = useState(0)
-  
+  const { state } = useLocation();
+  const student = state?.props;
+  const [name, setName] = useState(student?.name ?? "");
+  const [course, setCourse] = useState(student?.course ?? "");
+  const [ira, setIra] = useState(student?.ira ?? 0);
   const params = useParams();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    FirebaseServiceStudent.retrieve_promisse(
-      props.firebase.getFirestoreDb(),
-      (student)=>{
-          setName(student.name)
-          setCourse(student.course)
-          setIRA(student.ira)
-      },
-      params.id
-    )
-  }, [params.id, props]);
+  // useEffect(() => {
+  //   FirebaseServiceStudent.retrieve_promisse(
+  //     props.firebase.getFirestoreDb(),
+  //     (student)=>{
+  //         setName(student.name)
+  //         setCourse(student.course)
+  //         setIRA(student.ira)
+  //     },
+  //     params.id
+  //   )
+  // }, [params.id, props]);
 
   function handleSubmit(event) {
     event.preventDefault();
